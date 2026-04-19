@@ -36,45 +36,45 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         LoginResponse loginResponse = authService.authenticateUser(loginRequest);
-        
+
         ResponseCookie cookie = ResponseCookie.from("jwt", loginResponse.getAccessToken())
                 .httpOnly(true)
-                .secure(false) // Needs to be true in HTTPS
+                .secure(true) // Needs to be true for SameSite=None
                 .path("/")
                 .maxAge(86400) // 24 hours
-                .sameSite("Lax") // Lax works well locally crossing ports if sometimes strict fails
+                .sameSite("None") // Required for cross-origin reqs (local frontend -> render backend)
                 .build();
-                
+
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        
+
         Map<String, String> body = new HashMap<>();
         body.put("message", "Logged in successfully");
         return ResponseEntity.ok(body);
     }
-    
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(0) // Expire immediately
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
-                
+
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        
+
         Map<String, String> body = new HashMap<>();
         body.put("message", "Logged out successfully");
         return ResponseEntity.ok(body);
     }
-    
+
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-        
+
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("id", currentUser.getId());
         userInfo.put("email", currentUser.getEmail());
