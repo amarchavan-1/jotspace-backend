@@ -96,6 +96,21 @@ Once the application is running, the interactive API documentation can be access
 
 ---
 
+## 🧪 Testing
+
+The application implements rigorous unit testing using **JUnit 5**, **Mockito**, and **Spring MockMvc** to guarantee the integrity of API endpoints without hitting the active database.
+
+- **MockMvc Slicing:** Controller tests (like `AuthControllerTest`) are cleanly isolated using `@WebMvcTest`.
+- **Security Bypasses:** Security filters are strategically bypassed during controller-only slice tests (`@AutoConfigureMockMvc(addFilters = false)`) to enable hyper-focused unit validation of request and response structures.
+- **Service Mocking:** Business logic and database operations are mocked out using `@MockBean` to ensure rapid, deterministic testing cycles.
+
+Run the test suite locally with:
+```bash
+./mvnw test
+```
+
+---
+
 ## 🚀 Deployment
 
 The backend application is orchestrated for deployment on **Render.com** (Web Service).
