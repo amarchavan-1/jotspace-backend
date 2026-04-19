@@ -1,0 +1,54 @@
+@baseUrl = http://localhost:8080
+# After you login, copy the accessToken value and replace it here
+@token = replace_with_your_token
+
+### 1. Register a user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 2. Login the user
+# This will return your access token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 3. Create a note
+# Make sure you replaced the @token variable at the top!
+POST {{baseUrl}}/notes
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "My First Note",
+  "content": "This is a test note!"
+}
+
+### 4. Get all notes
+GET {{baseUrl}}/notes
+Authorization: Bearer {{token}}
+
+### 5. Update a note
+# Replace {id} with the ID of the note returned when you created it
+PUT {{baseUrl}}/notes/{id}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated Title",
+  "content": "Updated content goes here"
+}
+
+### 6. Delete a note
+# Replace {id} with the ID of the note
+DELETE {{baseUrl}}/notes/{id}
+Authorization: Bearer {{token}}
